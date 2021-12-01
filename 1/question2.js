@@ -1,10 +1,6 @@
 const fs = require("fs");
 
-const dataset = fs
-    .readFileSync("./dataset.txt")
-    .toString()
-    .split("\n")
-    .map((nr) => Number(nr));
+const dataset = fs.readFileSync("./dataset.txt").toString().split("\n");
 
 const slidingWindowSize = 3;
 
@@ -13,7 +9,7 @@ const { count } = dataset.reduce(
         if (slidingWindow.length === slidingWindowSize) {
             slidingWindow.shift();
         }
-        slidingWindow.push(current);
+        slidingWindow.push(Number(current));
 
         const currentAccumulation = slidingWindow.reduce(
             (acc, total) => acc + total,
