@@ -1,7 +1,7 @@
 const memory = {};
 
 const playRound = (data, diceValue, i) => {
-    let { pos1, score1, pos2, score2, throws } = data;
+    let { pos1, score1, pos2, score2, throws = 0 } = data;
     if (i === 0) {
         pos1 += diceValue;
     } else {
@@ -10,10 +10,9 @@ const playRound = (data, diceValue, i) => {
 
     const key = `${diceValue}|${i}|${throws}|${pos1}|${score1}|${pos2}|${score2}`;
 
-    if (memory[key]) {
-        console.log("🧜‍♂️");
-        return memory[key];
-    }
+    if (memory[key]) return memory[key];
+
+    let next = i;
 
     if (throws === 3) {
         if (i === 0) {
@@ -24,12 +23,11 @@ const playRound = (data, diceValue, i) => {
             score2 += pos2;
         }
         throws = 0;
+        next = i === 0 ? 1 : 0;
     }
 
     if (score1 >= 21) return [1, 0];
     if (score2 >= 21) return [0, 1];
-
-    const next = throws === 3 ? (i === 0 ? 1 : 0) : i;
 
     const scores = [
         playRound({ pos1, score1, pos2, score2, throws: throws + 1 }, 1, next),
@@ -42,10 +40,18 @@ const playRound = (data, diceValue, i) => {
         scores.reduce((acc, val) => acc + val[1], 0),
     ];
     memory[key] = result;
-    console.log("👢", memory);
     return result;
 };
 
-playRound({ pos1: 4, score1: 0, pos2: 8, score2: 0 }, 1, 0);
-playRound({ pos1: 4, score1: 0, pos2: 8, score2: 0 }, 2, 0);
-playRound({ pos1: 4, score1: 0, pos2: 8, score2: 0 }, 3, 0);
+const allScores = [
+    playRound({ pos1: 6, score1: 0, pos2: 3, score2: 0 }, 1, 0),
+    playRound({ pos1: 6, score1: 0, pos2: 3, score2: 0 }, 2, 0),
+    playRound({ pos1: 6, score1: 0, pos2: 3, score2: 0 }, 3, 0),
+];
+
+const finalResult = [
+    allScores.reduce((acc, val) => acc + val[0], 0),
+    allScores.reduce((acc, val) => acc + val[1], 0),
+];
+
+console.log("😄", finalResult);
